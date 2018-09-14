@@ -65,7 +65,7 @@ setup(
     author_email='redabits@gmail.com',
     license='Propietary',
     packages=['rs'],
-    install_requires=['SQLAlchemy>=1.2.11,<1.2', 'pyodbc>=4.0.24,<4.0'],
+    install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0'],
     scripts=[],
     test_suite='nose.collector',
     tests_require=['nose'],
