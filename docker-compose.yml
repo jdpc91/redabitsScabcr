@@ -1,0 +1,20 @@
+# Details: https://hub.docker.com/r/microsoft/mssql-server-linux/
+
+version: '3'
+services:
+  db: # For usage on GNU/Linux during development
+    image: microsoft/mssql-server-linux:2017-CU1
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      SA_PASSWORD: "u2ykHVe3XMSPzvL9"
+  db-win: # For usage on Windows during development
+    image: microsoft/mssql-server-windows-express:2017-CU1
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      SA_PASSWORD: "u2ykHVe3XMSPzvL9"
