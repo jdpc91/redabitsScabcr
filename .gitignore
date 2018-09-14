@@ -280,4 +280,6 @@ $RECYCLE.BIN/
 *.lnk
 
 
+data/
+
 # End of https://www.gitignore.io/api/emacs,linux,macos,python,windows,sublimetext,visualstudiocode

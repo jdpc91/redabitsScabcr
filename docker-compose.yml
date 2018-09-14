@@ -10,6 +10,8 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Developer"
       SA_PASSWORD: "u2ykHVe3XMSPzvL9"
+    volumes:
+      - ./data/:/var/mssql/
   db-win: # For usage on Windows during development
     image: microsoft/mssql-server-windows-express:2017-CU1
     ports:
