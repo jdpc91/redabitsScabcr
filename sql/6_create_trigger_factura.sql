@@ -35,17 +35,10 @@ INSERT INTO COMPROBANTE
            ,[FECHA_EMISION]
            ,[CONDICION_VENTA]
            ,[MEDIO_PAGO]
-           ,[EMISOR_NOMBRE]
-           ,[EMISOR_IDENT_TIPO]
-           ,[EMISOR_IDENT_NUM]
-           ,[EMISOR_NOMBRE_COMERCIAL]
            ,[EMISOR_PROVINCIA]
            ,[EMISOR_CANTON]
            ,[EMISOR_DISTRITO]
            ,[EMISOR_OTRAS_SENAS]
-           ,[EMISOR_TEL_COD_PAIS]
-           ,[EMISOR_TEL_NUM]
-           ,[EMISOR_CORREO_ELEC]
            ,[RECEPTOR_NOMBRE]
            ,[RECEPTOR_IDENT_TIPO]
            ,[RECEPTOR_IDENT_NUM]
@@ -74,17 +67,10 @@ INSERT INTO COMPROBANTE
 	GETDATE(),
 	'01',
 	IIF ([MONTO_TARJETA] IS NULL OR [MONTO_TARJETA] = 0, '01', '02'),
-	'Moderna',
-	'',--[EMISOR_IDENT_TIPO]
-	'', --[EMISOR_IDENT_NUM]
-	'', --[EMISOR_NOMBRE_COMERCIAL]
 	(SELECT [provincia] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'),
 	(SELECT [CANTON] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'), 
 	(SELECT [DISTRITO] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'), 
-	'50 MTS NORTE ICE CARTAGO',
-	'506',
-	'',--[EMISOR_TEL_NUM]
-	'reportes@scabcr.com',
+	(SELECT [OTRAS_SENAS] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA')
 	CLIENTE,
 	'01',
 	CEDULA,
