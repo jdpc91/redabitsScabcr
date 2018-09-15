@@ -3,7 +3,6 @@
 import os
 import unittest
 from datetime import datetime
-from rs.consumer import send
 
 
 class TestIntegration(unittest.TestCase):
@@ -39,8 +38,8 @@ class TestIntegration(unittest.TestCase):
             condicion_venta="00",
             medio_pago="00",
             emisor_nombre="Nombre",
-            emisor_ident_tipo="03",
-            emisor_ident_num="115600294703",
+            emisor_ident_tipo="01",
+            emisor_ident_num="114760094",
             emisor_nombre_comercial="SUPER PRUEBA 2000",
             emisor_provincia="00",
             emisor_canton="00",
@@ -71,10 +70,10 @@ class TestIntegration(unittest.TestCase):
             papel="tiquete")
         self.cp.comprobante_detalle = [cd1, cd1, cd1]
         # añade los nuevos objetos a la base de datos
-        session.add(self.cp)
-        session.commit()
 
     def test_send(self):
         """ Send a recipe and see what happens
         """
-        send(self.cp)
+        from rs.consumer import send
+        r = send(self.cp)
+        assert r

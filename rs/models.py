@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import (Column, Integer, String, Float, DateTime, SmallInteger,
-                        ForeignKey, Boolean)
+from os import getenv
+
+from rs import session
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        SmallInteger, String)
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import DECIMAL
-from sqlalchemy.ext.declarative import declarative_base
-from os import getenv
 
 BASE = declarative_base()
 
@@ -125,32 +127,35 @@ class Comprobante(BASE):
     normativa_fecha_resolucion = Column(
         String(100), name='NORMATIVA_FECHA_RESOLUCION')
     otros = Column(String(500), nullable=True, name='OTROS')
-    auth_usuario = Column(String(500), name='AUTH_USUARIO')
-    auth_password = Column(String, name='AUTH_PASSWORD')
-    auth_cert = Column(String, name='AUTH_CERT')
-    auth_pin = Column(String(500), name='AUTH_PIN')
-    auth_documents_endpoint = Column(
-        String(500), name='AUTH_DOCUMENTS_ENDPOINT')
-    auth_api_client_id = Column(String(50), name='AUTH_API_CLIENT_ID')
     notify_to = Column(String(500), name='NOTIFY_TO')
     notify_from = Column(String(500), name='NOTIFY_FROM')
     papel = Column(String(50), name='PAPEL')
     error = Column(String, nullable=True, name='ERROR')
     enviado = Column(Boolean, name='ENVIADO_API')
 
-    def auth_data(self):
+    def auth_data(self) -> dict:
         """ Return a dict with data for authentication
         """
-        data = {}
-        data['id'] = self.emisor_ident_num
-        data['entorno'] = 'prueb' if getenv('DEBUG') else 'prod'
+        data = {
+            'id': self.emisor_ident_num,
+            'entorno': 'prueb' if getenv('DEBUG') else 'prod',
+        }
+
+        return data
+
+    @classmethod
+    def get_details(cls, id):
+        """ Return a list of `ComprobanteDetalle`
+        """
+        return session.query(ComprobanteDetalle).filter(
+            ComprobanteDetalle.comprobante_id == id).all()
 
     def marshall(self):
         """ Return a dict with all fields
         """
         data = {}
         data['NumeroConsecutivo'] = self.numero_consecutivo
-        data['FechaEmision'] = self.fecha_emision
+        data['FechaEmision'] = self.fecha_emision.isoformat()
         data['CondicionVenta'] = self.condicion_venta
         data['MedioPago'] = self.medio_pago
         data['Emisor'] = {
@@ -180,8 +185,7 @@ class Comprobante(BASE):
             }
         }
         data['DetallesServicio'] = []
-        for detalle in self.query.join(ComprobanteDetalle).filter(
-                self.id).all():
+        for detalle in Comprobante.get_details(self.id):
             d = {
                 'LineaDetalle': {
                     'NumeroLinea': detalle.numero_linea,
@@ -221,7 +225,7 @@ class Comprobante(BASE):
         }
         data['Normativa'] = {
             'NumeroResolucion': self.normativa_num_resolucion,
-            'FechaResolucion': self.normativa_fecha_resolucion,
+            'FechaResolucion': self.normativa_fecha_resolucion.isoformat(),
         }
         data['Otros'] = self.otros
         # NOTA: El bloque de AUTH fue ignorado porque esa informacion se
