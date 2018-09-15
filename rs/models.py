@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, SmallInteger
+from sqlalchemy import (Column, Integer, String, Float, DateTime, SmallInteger,
+                        ForeignKey)
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import DECIMAL
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -68,6 +70,7 @@ class Comprobante(BASE):
     __tablename__ = "COMPROBANTE"
 
     id = Column(Integer, primary_key=True, name='ID')
+    comprobante_detalle = relationship('ComprobanteDetalle')
     clave = Column(String, name='CLAVE')
     numero_consecutivo = Column(String, name='NUMERO_CONSECUTIVO')
     fecha_emision = Column(DateTime, name='FECHA_EMISION')
@@ -137,7 +140,8 @@ class ComprobanteDetalle(BASE):
     __tablename__ = 'COMPROBANTE_LINEA_DETALLE'
 
     id = Column(Integer, primary_key=True, name="ID")
-    comprobante_id = Column(Integer, name='COMPROBANTE_ID')
+    comprobante_id = Column(
+        Integer, name='COMPROBANTE_ID', ForeignKey('COMPROBANTE.ID'))
     numero_linea = Column(Integer, name='NUMERO_LINEA')
     codigo_tipo = Column(String(2), name='CODIGO_TIPO')
     codigo_cod = Column(String(50), name='CODIGO_COD')
