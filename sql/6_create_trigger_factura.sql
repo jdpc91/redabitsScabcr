@@ -20,7 +20,7 @@ DECLARE @Prefix_Num_Consecutivo varchar(max)
 DECLARE @Num_Consecutivo varchar(max)
 DECLARE @Cantidad_Comprobantes int
 
-SET @Cantidad_Comprobantes = (SELECT COUNT(DISTINCT CLAVE) FROM [dbo].[COMPROBANTE])
+SET @Cantidad_Comprobantes = (SELECT TOP 1 [FACTURA_ACTUAL] FROM [dbo].[POS])
 SET @Prefix_Num_Consecutivo = '0010000101'
 
 IF @Cantidad_Comprobantes = 9999999999
@@ -68,11 +68,11 @@ INSERT INTO COMPROBANTE
 	GETDATE(),
 	'01',
 	IIF ([MONTO_TARJETA] IS NULL OR [MONTO_TARJETA] = 0, '01', '02'),
-	(SELECT CONVERT(VARCHAR(50), DECRYPTBYPASSPHRASE('scab456', EMISOR)) FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'),
-	(SELECT [provincia] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'),
-	(SELECT [CANTON] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'), 
-	(SELECT [DISTRITO] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA'), 
-	(SELECT [OTRAS_SENAS] FROM [dbo].[POS] WHERE [COD_POS] = 'TIENDA')
+	(SELECT TOP 1 CONVERT(VARCHAR(50), DECRYPTBYPASSPHRASE('scab456', EMISOR)) FROM [dbo].[POS]),
+	(SELECT TOP 1 [provincia] FROM [dbo].[POS]),
+	(SELECT TOP 1 [CANTON] FROM [dbo].[POS]), 
+	(SELECT TOP 1 [DISTRITO] FROM [dbo].[POS]), 
+	(SELECT TOP 1 [OTRAS_SENAS] FROM [dbo].[POS])
 	CLIENTE,
 	'01',
 	CEDULA,
