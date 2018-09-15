@@ -78,7 +78,7 @@ setup(
     author_email='redabits@gmail.com',
     license='Propietary',
     packages=['rs'],
-    install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0'],
+    install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0', 'requests>=2.19'],
     scripts=[],
     tests_require=['nose', 'coverage'],
     zip_safe=False,

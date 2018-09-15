@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import (Column, Integer, String, Float, DateTime, SmallInteger,
-                        ForeignKey)
+                        ForeignKey, Boolean)
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import DECIMAL
 from sqlalchemy.ext.declarative import declarative_base
+from os import getenv
 
 BASE = declarative_base()
 
@@ -134,6 +135,104 @@ class Comprobante(BASE):
     notify_to = Column(String(500), name='NOTIFY_TO')
     notify_from = Column(String(500), name='NOTIFY_FROM')
     papel = Column(String(50), name='PAPEL')
+    error = Column(String, nullable=True, name='ERROR')
+    enviado = Column(Boolean, name='ENVIADO_API')
+
+    def auth_data(self):
+        """ Return a dict with data for authentication
+        """
+        data = {}
+        data['id'] = self.emisor_ident_num
+        data['entorno'] = 'prueb' if getenv('DEBUG') else 'prod'
+
+    def marshall(self):
+        """ Return a dict with all fields
+        """
+        data = {}
+        data['NumeroConsecutivo'] = self.numero_consecutivo
+        data['FechaEmision'] = self.fecha_emision
+        data['CondicionVenta'] = self.condicion_venta
+        data['MedioPago'] = self.medio_pago
+        data['Emisor'] = {
+            'Nombre': self.emisor_nombre,
+            'Identificacion': {
+                'Tipo': self.emisor_ident_tipo,
+                'Numero': self.emisor_ident_num,
+            },
+            'NombreComercial': self.emisor_nombre_comercial,
+            'Ubicacion': {
+                'Provincia': self.emisor_provincia,
+                'Canton': self.emisor_canton,
+                'Distrito': self.emisor_distrito,
+                'OtrasSenas': self.emisor_otras_senas,
+            },
+            "Telefono": {
+                'CodigoPais': self.emisor_tel_cod_pais,
+                'NumTelefono': self.emisor_tel_num,
+            },
+            "CorreoElectronico": self.emisor_correo_elec
+        }
+        data['Receptor'] = {
+            'Nombre': self.receptor_nombre,
+            'Identificacion': {
+                'Tipo': self.receptor_ident_tipo,
+                'Numero': self.receptor_ident_num,
+            }
+        }
+        data['DetallesServicio'] = []
+        for detalle in self.query.join(ComprobanteDetalle).filter(
+                self.id).all():
+            d = {
+                'LineaDetalle': {
+                    'NumeroLinea': detalle.numero_linea,
+                    'Codigo': {
+                        'Tipo': detalle.codigo_tipo,
+                        'Codigo': detalle.codigo_cod
+                    },
+                    'Cantidad': detalle.cantidad,
+                    'UnidadMedida': detalle.unidad_medida,
+                    'Detalle': detalle.detalle,
+                    'PrecioUnitario': detalle.precio_unitario,
+                    "MontoTotal": detalle.monto_total,
+                    "MontoDescuento": detalle.monto_descuento,
+                    "NaturalezaDescuento": detalle.naturaleza_descuento,
+                    "SubTotal": detalle.subtotal,
+                    "Impuesto": {
+                        "Codigo": detalle.impuesto_codigo,
+                        "Tarifa": detalle.impuesto_tarifa,
+                        "Monto": detalle.impuesto_monto,
+                    },
+                    "MontoTotalLinea": detalle.monto_total_linea,
+                }
+            }
+            data['DetalleServicio'].append(d)
+        data['ResumenFactura'] = {
+            'CodigoMoneda': self.resumen_cod_moneda,
+            'TipoCambio': self.resumen_tipo_cambio,
+            'TotalMercanciasGravadas': self.resumen_total_mercancias_gravadas,
+            'TotalMercanciasExentas': self.resumen_total_exento,
+            'TotalGravado': self.resumen_total_gravado,
+            'TotalExento': self.resumen_total_exento,
+            'TotalVenta': self.resumen_total_venta,
+            'TotalDescuentos': self.resumen_total_descuentos,
+            'TotalVentaNeta': self.resumen_total_venta_neta,
+            'TotalImpuesto': self.resumen_total_impuesto,
+            'TotalComprobante': self.resumen_total_comprobante,
+        }
+        data['Normativa'] = {
+            'NumeroResolucion': self.normativa_num_resolucion,
+            'FechaResolucion': self.normativa_fecha_resolucion,
+        }
+        data['Otros'] = self.otros
+        # NOTA: El bloque de AUTH fue ignorado porque esa informacion se
+        # adquiere de otro recurso y no desde la base de datos
+        data['notify'] = {
+            "to": self.notify_to,
+            "from": self.notify_from,
+        }
+        data['papel'] = self.papel
+
+        return data
 
 
 class ComprobanteDetalle(BASE):
