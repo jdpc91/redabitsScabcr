@@ -1,7 +1,12 @@
 USE [Moderna]
 GO
 
-/****** Object:  Table [dbo].[COMPROBANTE_LINEA_DETALLE]    Script Date: 9/14/2018 1:23:01 AM ******/
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'[dbo].[COMPROBANTE_LINEA_DETALLE]') AND [type] = 'U')
+BEGIN
+	DROP TABLE [dbo].[COMPROBANTE_LINEA_DETALLE];
+END
+GO
+
 SET ANSI_NULLS ON
 GO
 
