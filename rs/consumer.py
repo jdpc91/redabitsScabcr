@@ -56,7 +56,6 @@ def send(comprobante: Comprobante):
     logging.debug(req.content)
     try:
         resp = req.json()
-        # FIX: Leer la respuesta e actualizar el comprobante
         return resp
     except json.decoder.JSONDecodeError:
         logging.error("Could not decode response to JSON.\nContent: {}".format(
