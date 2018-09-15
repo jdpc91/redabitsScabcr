@@ -140,8 +140,8 @@ class ComprobanteDetalle(BASE):
     __tablename__ = 'COMPROBANTE_LINEA_DETALLE'
 
     id = Column(Integer, primary_key=True, name="ID")
-    comprobante_id = Column(
-        Integer, name='COMPROBANTE_ID', ForeignKey('COMPROBANTE.ID'))
+    comprobante_id = Column('COMPROBANTE_ID', Integer,
+                            ForeignKey('COMPROBANTE.ID'))
     numero_linea = Column(Integer, name='NUMERO_LINEA')
     codigo_tipo = Column(String(2), name='CODIGO_TIPO')
     codigo_cod = Column(String(50), name='CODIGO_COD')
