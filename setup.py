@@ -7,6 +7,19 @@ import subprocess
 from distutils.cmd import Command
 
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+
+class NoseTestCommand(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # Run nose ensuring that argv simulates running nosetests directly
+        import nose
+        nose.run_exit(argv=['nosetests'])
 
 
 class DockerStart(Command):
@@ -67,10 +80,10 @@ setup(
     packages=['rs'],
     install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0'],
     scripts=[],
-    test_suite='nose.collector',
-    tests_require=['nose'],
+    tests_require=['nose', 'coverage'],
     zip_safe=False,
     cmdclass={
         'docker_start': DockerStart,
-        'docker_stop': DockerStop
+        'docker_stop': DockerStop,
+        'test': NoseTestCommand
     })
