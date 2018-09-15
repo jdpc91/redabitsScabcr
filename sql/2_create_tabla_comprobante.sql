@@ -1,12 +1,6 @@
 USE [Moderna]
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'[dbo].[COMPROBANTE]') AND [type] = 'U')
-BEGIN
-	DROP TABLE [dbo].[COMPROBANTE];
-END
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -51,12 +45,6 @@ CREATE TABLE [dbo].[COMPROBANTE](
 	[NORMATIVA_NUM_RESOLUCION] [varchar](100) NOT NULL,
 	[NORMATIVA_FECHA_RESOLUCION] [varchar](100) NOT NULL,
 	[OTROS] [varchar](500) NULL,
-	[AUTH_USUARIO] [varchar](500) NOT NULL,
-	[AUTH_PASSWORD] [varchar](max) NOT NULL,
-	[AUTH_CERT] [varchar](max) NOT NULL,
-	[AUTH_PIN] [varchar](500) NOT NULL,
-	[AUTH_DOCUMENTS_ENDPOINT] [varchar](500) NOT NULL,
-	[AUTH_API_CLIENT_ID] [varchar](50) NOT NULL,
 	[NOTIFY_TO] [varchar](500) NOT NULL,
 	[NOTIFY_FROM] [varchar](500) NOT NULL,
 	[PAPEL] [varchar](50) NOT NULL,

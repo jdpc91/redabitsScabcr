@@ -1,12 +1,6 @@
 USE [Moderna]
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = OBJECT_ID(N'[dbo].[INSERT_COMPROBANTE_AUDIT]') AND [type] = 'TR')
-BEGIN
-	DROP TRIGGER [dbo].[INSERT_COMPROBANTE_AUDIT];
-END
-GO
-
 SET ANSI_NULLS ON
 GO
 
@@ -29,7 +23,7 @@ INSERT INTO COMPROBANTE_AUDIT
 							, NUMERO_CONSECUTIVO
 							, IS_CORRECTO
 							, ERROR)
-SELECT
+(SELECT
 	ID
 	, GETDATE()
 	, CLAVE
@@ -37,7 +31,7 @@ SELECT
 	, IIF (ERROR IS NULL OR ERROR = '', 1, 0)
 	,  ERROR
 FROM 
-	inserted
+	inserted)
 
 
 SELECT 
