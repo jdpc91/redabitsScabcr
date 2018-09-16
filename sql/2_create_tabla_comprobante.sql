@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[COMPROBANTE](
 	[NUMERO_CONSECUTIVO] [varchar](max) NOT NULL,
 	[FECHA_EMISION] [datetime] NOT NULL,
 	[CONDICION_VENTA] [varchar](2) NOT NULL,
-	[MEDIO_PAGO] [varchar](2) NOT NULL
+	[MEDIO_PAGO] [varchar](2) NOT NULL,
 	[EMISOR_IDENT_NUM] [varchar](50) NOT NULL,
 	[EMISOR_PROVINCIA] [varchar](2) NOT NULL,
 	[EMISOR_CANTON] [varchar](3) NOT NULL,
