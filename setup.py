@@ -79,7 +79,7 @@ setup(
     license='Propietary',
     packages=['rs'],
     install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0', 'requests>=2.19'],
-    scripts=[],
+    scripts=['bin/rsb'],
     tests_require=['nose', 'coverage'],
     zip_safe=False,
     cmdclass={
