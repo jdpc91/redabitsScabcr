@@ -58,7 +58,7 @@ class Factura(BASE):
         g = Generic('es')
 
         for n in range(amount):
-            folio = g.Code.pin("5060209180001081103###########"
+            folio = g.code.pin("5060209180001081103###########"
                                "######00008161887157")
             factura = Factura(
                 num_factura=n,
@@ -73,12 +73,12 @@ class Factura(BASE):
                 monto_nc=0,
                 monto_certificado=0,
                 iv=0,
-                vendedor=g.Person.full_name(),
-                cajero=g.Person.full_name(),
-                cliente=g.Person.full_name(),
+                vendedor=g.person.full_name(),
+                cajero=g.person.full_name(),
+                cliente=g.person.full_name(),
                 descuento=0,
                 cedula='114760094',  # de Daniel
-                correo=g.Person.email(),
+                correo=g.person.email(),
                 folio=folio,
                 enlace="http://api.redabits.com/getrespuesta.php?clave=" +
                 folio)
