@@ -276,6 +276,7 @@ class Comprobante(BASE):
             "from": self.notify_from,
         }
         data['papel'] = self.papel
+        assert data['DetallesServicio'], "`DetallesServicios` can't be empty"
 
         return data
 
