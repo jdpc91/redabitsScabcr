@@ -120,18 +120,11 @@ class Comprobante(BASE):
     fecha_emision = Column(DateTime, name='FECHA_EMISION')
     condicion_venta = Column(String(2), name='CONDICION_VENTA')
     medio_pago = Column(String(2), name='MEDIO_PAGO')
-    emisor_nombre = Column(String(100), name='EMISOR_NOMBRE')
-    emisor_ident_tipo = Column(String(2), name="EMISOR_IDENT_TIPO")
     emisor_ident_num = Column(String(50), name="EMISOR_IDENT_NUM")
-    emisor_nombre_comercial = Column(
-        String(500), name='EMISOR_NOMBRE_COMERCIAL')
     emisor_provincia = Column(String(2), name='EMISOR_PROVINCIA')
     emisor_canton = Column(String(3), name='EMISOR_CANTON')
     emisor_distrito = Column(String(3), name='EMISOR_DISTRITO')
     emisor_otras_senas = Column(String(500), name='EMISOR_OTRAS_SENAS')
-    emisor_tel_cod_pais = Column(Integer, name='EMISOR_TEL_COD_PAIS')
-    emisor_tel_num = Column(String(50), name='EMISOR_TEL_NUM')
-    emisor_correo_elec = Column(String(100), name='EMISOR_CORREO_ELEC')
     receptor_nombre = Column(
         String(100), nullable=True, name='RECEPTOR_NOMBRE')
     receptor_ident_tipo = Column(
