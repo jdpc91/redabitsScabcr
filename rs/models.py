@@ -48,6 +48,47 @@ class Factura(BASE):
     respuesta_tributacion = Column(
         String(1000), nullable=True, name='RESPUESTA_TRIBUTACION')
 
+    @staticmethod
+    def _populate(amount=200):
+        """ Add several invoices into the database for testing purpose.
+        """
+        from mimesis import Generic
+        from rs import session
+
+        g = Generic('es')
+
+        for n in range(amount):
+            folio = g.code.pin("5060209180001081103###########"
+                               "######00008161887157")
+            factura = Factura(
+                num_factura=n,
+                cod_pos="TIENDA",
+                tipo="F",
+                monto_total=n,
+                subtotal=n,
+                monto_contado=n,
+                monto_cheque=0,
+                monto_tarjeta=0,
+                monto_credito=0,
+                monto_nc=0,
+                monto_certificado=0,
+                iv=0,
+                vendedor=g.person.full_name(),
+                cajero=g.person.full_name(),
+                cliente=g.person.full_name(),
+                descuento=0,
+                cedula='114760094',  # de Daniel
+                correo=g.person.email(),
+                folio=folio,
+                enlace="http://api.redabits.com/getrespuesta.php?clave=" +
+                folio)
+            session.add(factura)
+
+            try:
+                session.commit()
+            except:
+                session.rollback()
+
 
 class Historico(BASE):
     __tablename__ = "HISTORICO_MOV"
@@ -79,18 +120,11 @@ class Comprobante(BASE):
     fecha_emision = Column(DateTime, name='FECHA_EMISION')
     condicion_venta = Column(String(2), name='CONDICION_VENTA')
     medio_pago = Column(String(2), name='MEDIO_PAGO')
-    emisor_nombre = Column(String(100), name='EMISOR_NOMBRE')
-    emisor_ident_tipo = Column(String(2), name="EMISOR_IDENT_TIPO")
     emisor_ident_num = Column(String(50), name="EMISOR_IDENT_NUM")
-    emisor_nombre_comercial = Column(
-        String(500), name='EMISOR_NOMBRE_COMERCIAL')
     emisor_provincia = Column(String(2), name='EMISOR_PROVINCIA')
     emisor_canton = Column(String(3), name='EMISOR_CANTON')
     emisor_distrito = Column(String(3), name='EMISOR_DISTRITO')
     emisor_otras_senas = Column(String(500), name='EMISOR_OTRAS_SENAS')
-    emisor_tel_cod_pais = Column(Integer, name='EMISOR_TEL_COD_PAIS')
-    emisor_tel_num = Column(String(50), name='EMISOR_TEL_NUM')
-    emisor_correo_elec = Column(String(100), name='EMISOR_CORREO_ELEC')
     receptor_nombre = Column(
         String(100), nullable=True, name='RECEPTOR_NOMBRE')
     receptor_ident_tipo = Column(
@@ -159,9 +193,7 @@ class Comprobante(BASE):
         data['CondicionVenta'] = self.condicion_venta
         data['MedioPago'] = self.medio_pago
         data['Emisor'] = {
-            'Nombre': self.emisor_nombre,
             'Identificacion': {
-                'Tipo': self.emisor_ident_tipo,
                 'Numero': self.emisor_ident_num,
             },
             'NombreComercial': self.emisor_nombre_comercial,
@@ -172,10 +204,8 @@ class Comprobante(BASE):
                 'OtrasSenas': self.emisor_otras_senas,
             },
             "Telefono": {
-                'CodigoPais': self.emisor_tel_cod_pais,
-                'NumTelefono': self.emisor_tel_num,
+                'CodigoPais': '506',
             },
-            "CorreoElectronico": self.emisor_correo_elec
         }
         data['Receptor'] = {
             'Nombre': self.receptor_nombre,
@@ -235,6 +265,8 @@ class Comprobante(BASE):
             "from": self.notify_from,
         }
         data['papel'] = self.papel
+        if len(data['DetallesServicio']) == 0:
+            raise ValueError("`DetallesServicios` can't be empty")
 
         return data
 
