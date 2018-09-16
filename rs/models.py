@@ -193,9 +193,7 @@ class Comprobante(BASE):
         data['CondicionVenta'] = self.condicion_venta
         data['MedioPago'] = self.medio_pago
         data['Emisor'] = {
-            'Nombre': self.emisor_nombre,
             'Identificacion': {
-                'Tipo': self.emisor_ident_tipo,
                 'Numero': self.emisor_ident_num,
             },
             'NombreComercial': self.emisor_nombre_comercial,
@@ -206,10 +204,8 @@ class Comprobante(BASE):
                 'OtrasSenas': self.emisor_otras_senas,
             },
             "Telefono": {
-                'CodigoPais': self.emisor_tel_cod_pais,
-                'NumTelefono': self.emisor_tel_num,
+                'CodigoPais': '506',
             },
-            "CorreoElectronico": self.emisor_correo_elec
         }
         data['Receptor'] = {
             'Nombre': self.receptor_nombre,

@@ -36,13 +36,23 @@ def auth(comprobante: Comprobante) -> dict:
     logging.debug(req.content)
     json = req.json()
     data = comprobante.marshall()
-    data['auth'] = json
-    data['auth']['documents_endpoint'] = MH_API_TEST if getenv(
-        'DEBUG') else MH_API_PROD
-    data['auth']['authentication_endpoint'] = MH_API_AUTH_TEST if getenv(
-        'DEBUG') else MH_API_AUTH_PROD
-    data['auth']['api_client_id'] = 'api-stag' if getenv(
-        'DEBUG') else 'api-prod'
+    docendp = MH_API_TEST if getenv('DEBUG') else MH_API_PROD
+    authendp = MH_API_AUTH_TEST if getenv('DEBUG') else MH_API_AUTH_PROD
+    # Set authentication data
+    data['auth'] = {
+        'usuario': json['usuario'],
+        'password': json['password'],
+        'cert': json['cert'],
+        'pin': json['pin'],
+        'documents_endpoint': docendp,
+        'authentication_endpoint': authendp,
+        'api_client_id': 'api-stag' if getenv('DEBUG') else 'api-prod'
+    }
+    # Set Emisor data
+    data['Emisor']['Nombre'] = json['nombre']
+    data['Emisor']['Identificacion']['Tipo'] = json['tipo_id']
+    data['Emisor']['Telefono']['NumTelefono'] = json['telefono']
+    data['Emisor']['CorreoElectronico'] = json['correo']
 
     return data
 
