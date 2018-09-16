@@ -54,9 +54,4 @@ def send(comprobante: Comprobante):
     logging.debug(json.dumps(payload))
     req = requests.post(RECIPE_API_URL, json=payload)
     logging.debug(req.content)
-    try:
-        resp = req.json()
-        return resp
-    except json.decoder.JSONDecodeError:
-        logging.error("Could not decode response to JSON.\nContent: {}".format(
-            req.content))
+    return req
