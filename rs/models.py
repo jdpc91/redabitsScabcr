@@ -34,9 +34,11 @@ class Factura(BASE):
     cliente = Column(String(50), nullable=True, name='CLIENTE')
     descuento = Column(Float, nullable=True, name='DESCUENTO')
     cod_tarjeta = Column(String(6), nullable=True, name='COD_TARJ')
-    observaciones = Column(String(250), nullable=True, name='OBSERVACIONES')
+    observaciones = Column(String(100), nullable=True, name='OBSERVACIONES')
+    hilera = Column(String(2000), nullable=True, name='HILERA')
     mensaje_error = Column(String, nullable=True, name='MENSAJE_ERROR')
     cedula = Column(String(20), nullable=True, name='CEDULA')
+    cedula_tipo = Column(String(2), nullable=True, name='TIPO_CEDULA')
     correo = Column(String(100), nullable=True, name='CORREO')
     folio = Column(String(250), nullable=True, name='FOLIOMH')
     enlace = Column(String(500), nullable=True, name='LINK')
@@ -83,11 +85,7 @@ class Factura(BASE):
                 enlace="http://api.redabits.com/getrespuesta.php?clave=" +
                 folio)
             session.add(factura)
-
-            try:
-                session.commit()
-            except:
-                session.rollback()
+            session.commit()
 
 
 class Historico(BASE):
