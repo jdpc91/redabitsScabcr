@@ -24,7 +24,7 @@ def sendall():
         if resp:
             # Revisar respuesta del servidor y actualizar el estado del
             # comprobante
-            pass
+            return resp
         else:
             # Problemas con el servidor
             logging.error("Could not get accepted receipt #{}",

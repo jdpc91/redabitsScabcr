@@ -48,6 +48,47 @@ class Factura(BASE):
     respuesta_tributacion = Column(
         String(1000), nullable=True, name='RESPUESTA_TRIBUTACION')
 
+    @staticmethod
+    def _populate(amount=200):
+        """ Add several invoices into the database for testing purpose.
+        """
+        from mimesis import Generic
+        from rs import session
+
+        g = Generic('es')
+
+        for n in range(amount):
+            folio = g.Code.pin("5060209180001081103###########"
+                               "######00008161887157")
+            factura = Factura(
+                num_factura=n,
+                cod_pos="TIENDA",
+                tipo="F",
+                monto_total=n,
+                subtotal=n,
+                monto_contado=n,
+                monto_cheque=0,
+                monto_tarjeta=0,
+                monto_credito=0,
+                monto_nc=0,
+                monto_certificado=0,
+                iv=0,
+                vendedor=g.Person.full_name(),
+                cajero=g.Person.full_name(),
+                cliente=g.Person.full_name(),
+                descuento=0,
+                cedula='114760094',  # de Daniel
+                correo=g.Person.email(),
+                folio=folio,
+                enlace="http://api.redabits.com/getrespuesta.php?clave=" +
+                folio)
+            session.add(factura)
+
+            try:
+                session.commit()
+            except:
+                session.rollback()
+
 
 class Historico(BASE):
     __tablename__ = "HISTORICO_MOV"

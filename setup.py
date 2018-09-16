@@ -80,7 +80,7 @@ setup(
     packages=['rs'],
     install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0', 'requests>=2.19'],
     scripts=['bin/rsb'],
-    tests_require=['nose', 'coverage'],
+    tests_require=['nose', 'coverage', 'mimesis'],
     zip_safe=False,
     cmdclass={
         'docker_start': DockerStart,
