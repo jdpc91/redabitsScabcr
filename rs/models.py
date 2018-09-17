@@ -60,8 +60,6 @@ class Factura(BASE):
         g = Generic('es')
 
         for n in range(amount):
-            folio = g.code.pin("5060209180001081103###########"
-                               "######00008161887157")
             factura = Factura(
                 num_factura=n,
                 cod_pos="TIENDA",
@@ -80,10 +78,7 @@ class Factura(BASE):
                 cliente=g.person.full_name(),
                 descuento=0,
                 cedula='114760094',  # de Daniel
-                correo=g.person.email(),
-                folio=folio,
-                enlace="http://api.redabits.com/getrespuesta.php?clave=" +
-                folio)
+                correo=g.person.email())
             session.add(factura)
             session.commit()
 
@@ -165,6 +160,11 @@ class Comprobante(BASE):
     error = Column(String, nullable=True, name='ERROR')
     enviado = Column(Boolean, name='ENVIADO_API')
 
+    def __repr__(self):
+        return "<Comprobante {} clave: {} consecutivo {} estado: {}>".format(
+            self.id, self.clave, self.numero_consecutivo,
+            "ENVIADO" if self.enviado else "NO-ENVIADO")
+
     def auth_data(self) -> dict:
         """ Return a dict with data for authentication
         """
@@ -186,6 +186,7 @@ class Comprobante(BASE):
         """ Return a dict with all fields
         """
         data = {}
+        data['Clave'] = ""
         data['NumeroConsecutivo'] = self.numero_consecutivo
         data['FechaEmision'] = self.fecha_emision.isoformat()
         data['CondicionVenta'] = self.condicion_venta
@@ -194,7 +195,6 @@ class Comprobante(BASE):
             'Identificacion': {
                 'Numero': self.emisor_ident_num,
             },
-            'NombreComercial': self.emisor_nombre_comercial,
             'Ubicacion': {
                 'Provincia': self.emisor_provincia,
                 'Canton': self.emisor_canton,
@@ -253,7 +253,7 @@ class Comprobante(BASE):
         }
         data['Normativa'] = {
             'NumeroResolucion': self.normativa_num_resolucion,
-            'FechaResolucion': self.normativa_fecha_resolucion.isoformat(),
+            'FechaResolucion': self.normativa_fecha_resolucion,
         }
         data['Otros'] = self.otros
         # NOTA: El bloque de AUTH fue ignorado porque esa informacion se
