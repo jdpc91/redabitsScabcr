@@ -12,7 +12,7 @@ GO
 
 CREATE TABLE [dbo].[COMPROBANTE](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[CLAVE] [varchar](max) NOT NULL,
+	[CLAVE] [varchar](max) NULL,
 	[NUMERO_CONSECUTIVO] [varchar](max) NOT NULL,
 	[FECHA_EMISION] [datetime] NOT NULL,
 	[CONDICION_VENTA] [varchar](2) NOT NULL,
