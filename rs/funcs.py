@@ -7,6 +7,8 @@ from rs import session
 from rs.consumer import send
 from rs.models import Comprobante
 
+API_CLAVE_URL = "http://api.redabits.com/getrespuesta.php?clave=%s"
+
 
 def receipts():
     """ Return a list of pending receipts
@@ -28,6 +30,8 @@ def sendall():
             # Revisar respuesta del servidor y actualizar el estado del
             # comprobante
             comprobante.enviado = True
+            comprobante.clave = resp.content.strip()
+            # FIXME: Coloca la clave en la factura relacionada a Comprobante.
             session.commit()
         else:
             # Problemas con el servidor
