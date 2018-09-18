@@ -4,7 +4,7 @@
 from os import getenv
 
 from rs import session
-from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+from sqlalchemy import (Boolean, Column, DateTime, Float, Integer,
                         SmallInteger, String)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -102,12 +102,14 @@ class Historico(BASE):
     observaciones = Column(String(2000), nullable=True, name='OBSERVACIONES')
     iv = Column(Float, nullable=True, name='IV')
 
+    def __repr__(self):
+        return "<Historico {} ({})>".format(self.num_factura, self.cod_pos)
+
 
 class Comprobante(BASE):
     __tablename__ = "COMPROBANTE"
 
     id = Column(Integer, primary_key=True, name='ID')
-    comprobante_detalle = relationship('ComprobanteDetalle')
     clave = Column(String, name='CLAVE')
     numero_consecutivo = Column(String, name='NUMERO_CONSECUTIVO')
     fecha_emision = Column(DateTime, name='FECHA_EMISION')
@@ -174,13 +176,6 @@ class Comprobante(BASE):
         }
 
         return data
-
-    @classmethod
-    def get_details(cls, id):
-        """ Return a list of `ComprobanteDetalle`
-        """
-        return session.query(ComprobanteDetalle).filter(
-            ComprobanteDetalle.comprobante_id == id).all()
 
     def marshall(self):
         """ Return a dict with all fields
@@ -267,31 +262,3 @@ class Comprobante(BASE):
             raise ValueError("`DetallesServicios` can't be empty")
 
         return data
-
-
-class ComprobanteDetalle(BASE):
-    __tablename__ = 'COMPROBANTE_LINEA_DETALLE'
-
-    id = Column(Integer, primary_key=True, name="ID")
-    comprobante_id = Column('COMPROBANTE_ID', Integer,
-                            ForeignKey('COMPROBANTE.ID'))
-    numero_linea = Column(Integer, name='NUMERO_LINEA')
-    codigo_tipo = Column(String(2), name='CODIGO_TIPO')
-    codigo_cod = Column(String(50), name='CODIGO_COD')
-    cantidad = Column(Integer, name='CANTIDAD')
-    unidad_medida = Column(String(50), name='UNIDAD_MEDIDA')
-    detalle = Column(String(500), name='DETALLE')
-    precio_unitario = Column(
-        DECIMAL(precision=18, scale=2), name='PRECIO_UNITARIO')
-    monto_total = Column(DECIMAL(precision=18, scale=2), name='MONTO_TOTAL')
-    monto_descuento = Column(
-        DECIMAL(precision=18, scale=2), nullable=True, name='MONTO_DESCUENTO')
-    naturaleza_descuento = Column(
-        String(100), nullable=True, name='NATURALEZA_DESCUENTO')
-    subtotal = Column(DECIMAL(precision=18, scale=2), name='SUBTOTAL')
-    impuesto_codigo = Column(String(2), nullable=True, name='IMPUESTO_CODIGO')
-    impuesto_tarifa = Column(String(2), nullable=True, name='IMPUESTO_TARIFA')
-    impuesto_monto = Column(
-        DECIMAL(precision=18, scale=2), nullable=True, name='IMPUESTO_MONTO')
-    monto_total_linea = Column(
-        DECIMAL(precision=18, scale=2), name='MONTO_TOTAL_LINEA')
