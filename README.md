@@ -1,38 +1,28 @@
 # RS
 
-Description: To be written.
+Envía comprobantes de las facturas insertadas en la base de datos a la API de facturas de REDABITS.
 
-# Installation (either production or development)
+# Instalación
 
-Inside a virtual environment do:
+Primero lea esta [guía de instalación de ODBC para Windows](https://docs.microsoft.com/en-us/sql/connect/python/pyodbc/step-1-configure-development-environment-for-pyodbc-python-development?view=sql-server-2017) hasta el punto 3. Luego de descargar el repositorio se ejecuta `pip` para instalar el paquete con todas sus dependencias:
 
 ```
 pip install .
 ```
 
-# Scripts that use RS module
+# Variables de entorno
 
-They go into `bin/`, do `pip install .` to install RS with all its dependencies and develop the script normally.
-
-# Starting MSSQL with Docker on GNU/Linux or Windows
-
-If you don't have MSSQL installed on your Windows machine or currently just have GNU/Linux, and you have Docker and Docker compose installed you can use `python setup.py docker_start` which will start a MSSQL docker image exposing the service at the port `1433`, you can also use `python setup.py docker_stop` to stop the docker container.
-
-
-# Restore backup for development
-
-On `/var` create a directory called `opt/mssql/db`, place the `MODERNA13.BAK` file under `/var/opt/mssql` and restore the database with the following command (**this only works for MSSQL running as a Docker image under GNU/Linux**):
+- `DEBUG`: Si esta establecido (con cualquier valor diferente a una cadena vacía) usa una configuración adecuada para pruebas. **No se meten datos falsos a ninguna base de datos durante la ejecución**. Para usar valores de producción esta variable de entorno **no** debe ser establecida, además, debe correr el script con la bandera `--production`.
+- `DATABASE_URL`: Indica la URL o el DSN de la base de datos MSSQL. El formato para DSN tiene que ser `mssql+pyodbc://<username>:<password>@<dsnname>`, para conexion por URL el formato debe ser `mssql+pyodbc://<username>:<password>@<host>:<port>/<databasename>?driver=<SQL+Server+Native+Client+XX.YY>` el SQL Server driver puede variar, para conocer el valor correcto se puede usar el siguiente comando desde la linea de comandos:
 
 ```
-sqlcmd -S localhost -U SA -P u2ykHVe3XMSPzvL9 -Q "RESTORE DATABASE TESTING FROM DISK = '/var/mssql/MODERNA13.BAK' WITH MOVE \"CARNES\" TO \"/var/mssql/db/CARNES.mdf\", MOVE \"CARNES_log\" TO \"/var/mssql/db/CARNES.ldf\""
+python -c 'import pyodbc; print(pyodbc.drivers())'
 ```
 
-The name of the database will be `TESTING`.
+# Como usar
 
-# For help
+Simplemente ejecute `rsb --production` para una ejecución con configuración de producción.
 
-Do the following
+# Pruebas de integración (CAMBIOS DESTRUCTIVOS EN LA BASE DE DATOS)
 
-```
-python setup.py --help-commands
-```
+**Las pruebas unitarias deben realizarse en una base de datos que no sea del cliente**. Dentro del proyecto puede ejecutar `python setup.py test`.
