@@ -13,7 +13,7 @@ RECIPE_API_URL = "http://api.redabits.com:3000/factura"
 MH_API_BASE = "https://api.comprobanteselectronicos.go.cr/"
 MH_API_TEST_BASE = "https://idp.comprobanteselectronicos.go.cr/"
 MH_API_PROD = urljoin(MH_API_BASE, "recepcion/v1")
-MH_API_TEST = urljoin(MH_API_TEST_BASE, "recepcion-sandbox/v1")
+MH_API_TEST = urljoin(MH_API_BASE, "recepcion-sandbox/v1")
 MH_API_AUTH_TEST = urljoin(
     MH_API_TEST_BASE, ("auth/realms/rut-stag/protocol/openid-connect/token")
 )
