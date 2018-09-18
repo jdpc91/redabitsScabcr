@@ -31,8 +31,7 @@ def sendall():
     for comprobante in receipts():
         resp = send(comprobante)
         clave = resp.content.decode("utf-8").strip()
-        if resp.status_code == 200:
-            assert clave.isdigit(), "Clave got bogus API response: {}".format(clave)
+        if clave.isdigit():
             comprobante.enviado = True
             comprobante.clave = clave
             factura = comprobante.get_factura()
