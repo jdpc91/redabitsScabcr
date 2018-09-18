@@ -66,7 +66,7 @@ class Factura(BASE):  # type: ignore
             subtotal = montototal - montodescuento
             data = {
                 "NumeroLinea": linea,
-                "Codigo": {"Tipo": detail.tipo, "Codigo": detail.codigo.strip()},
+                "Codigo": {"Tipo": "04", "Codigo": detail.codigo.strip()},
                 "Cantidad": detail.cantidad,
                 "UnidadMedida": "Unid",
                 "Detalle": detail.desc_producto,
@@ -262,7 +262,7 @@ class Comprobante(BASE):  # type: ignore
                 "Numero": self.receptor_ident_num,
             },
         }
-        data["DetallesServicio"] = []
+        data["DetalleServicio"] = []
         factura = self.get_factura()
         for detail in factura.get_details():
             data["DetallesServicio"].append(detail)
