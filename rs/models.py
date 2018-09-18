@@ -65,18 +65,24 @@ class Factura(BASE):  # type: ignore
             descuentodesc = "Descuentos otorgados" if montodescuento else ""
             subtotal = montototal - montodescuento
             data = {
-                "NumeroLinea": linea,
-                "Codigo": {"Tipo": "04", "Codigo": detail.codigo.strip()},
-                "Cantidad": detail.cantidad,
-                "UnidadMedida": "Unid",
-                "Detalle": detail.desc_producto,
-                "PrecioUnitario": detail.precio,
-                "MontoTotal": montototal,
-                "MontoDescuento": montodescuento,
-                "NaturalezaDescuento": descuentodesc,
-                "SubTotal": subtotal,
-                "Impuesto": {"Codigo": "01", "Tarifa": "13", "Monto": subtotal * 13},
-                "MontoTotalLinea": subtotal + subtotal * 13,
+                "LineaDetalle": {
+                    "NumeroLinea": linea,
+                    "Codigo": {"Tipo": "04", "Codigo": detail.codigo.strip()},
+                    "Cantidad": detail.cantidad,
+                    "UnidadMedida": "Unid",
+                    "Detalle": detail.desc_producto,
+                    "PrecioUnitario": detail.precio,
+                    "MontoTotal": montototal,
+                    "MontoDescuento": montodescuento,
+                    "NaturalezaDescuento": descuentodesc,
+                    "SubTotal": subtotal,
+                    "Impuesto": {
+                        "Codigo": "01",
+                        "Tarifa": "13",
+                        "Monto": subtotal * 13,
+                    },
+                    "MontoTotalLinea": subtotal + subtotal * 13,
+                }
             }
             linea = linea + 1
             yield data
@@ -265,7 +271,7 @@ class Comprobante(BASE):  # type: ignore
         data["DetalleServicio"] = []
         factura = self.get_factura()
         for detail in factura.get_details():
-            data["DetallesServicio"].append(detail)
+            data["DetalleServicio"].append(detail)
         data["ResumenFactura"] = {
             "CodigoMoneda": self.resumen_cod_moneda,
             "TipoCambio": float(self.resumen_tipo_cambio),
@@ -286,6 +292,6 @@ class Comprobante(BASE):  # type: ignore
         data["Otros"] = self.otros
         data["notify"] = {"to": self.notify_to, "from": self.notify_from}
         data["papel"] = self.papel
-        assert len(data["DetallesServicio"]) > 0, "`DetallesServicios` can't be empty"
+        assert len(data["DetalleServicio"]) > 0, "`DetallesServicios` can't be empty"
 
         return data
