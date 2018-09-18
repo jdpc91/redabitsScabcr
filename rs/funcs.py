@@ -30,9 +30,9 @@ def sendall():
     logging.info("Sending pending receipts...")
     for comprobante in receipts():
         resp = send(comprobante)
+        clave = resp.content.decode("utf-8").strip()
         if resp.status_code == 200:
-            # Actualiza estos datos solo si no estamos haciendo pruebas
-            clave = resp.content.strip()
+            assert clave.isdigit(), "Clave got bogus API response: {}".format(clave)
             comprobante.enviado = True
             comprobante.clave = clave
             factura = comprobante.get_factura()
@@ -42,7 +42,9 @@ def sendall():
         else:
             # Problemas con el servidor
             logging.error(
-                "Could not get accepted receipt #{}", comprobante.numero_consecutivo
+                "Could not get accepted receipt #{}. API response: {}",
+                comprobante.numero_consecutivo,
+                clave,
             )
             logging.info(
                 "Will try re-sending receipt #{} on next run",
