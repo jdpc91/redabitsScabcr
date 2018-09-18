@@ -76,11 +76,9 @@ class Factura(BASE):  # type: ignore
                     "MontoDescuento": montodescuento,
                     "NaturalezaDescuento": descuentodesc,
                     "SubTotal": subtotal,
-                    "Impuesto": {
-                        "Codigo": "01",
-                        "Tarifa": "13",
-                        "Monto": subtotal * 13,
-                    },
+                    "Impuesto": [
+                        {"Codigo": "01", "Tarifa": "13", "Monto": subtotal * 13}
+                    ],
                     "MontoTotalLinea": subtotal + subtotal * 13,
                 }
             }
@@ -247,6 +245,7 @@ class Comprobante(BASE):  # type: ignore
         """
         data = {}
         data["Clave"] = ""
+        data["Situacion"] = "1"
         data["NumeroConsecutivo"] = self.numero_consecutivo
         data["FechaEmision"] = self.fecha_emision.isoformat()
         data["CondicionVenta"] = self.condicion_venta
