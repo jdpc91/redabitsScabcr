@@ -12,6 +12,7 @@ GO
 
 CREATE TABLE [dbo].[COMPROBANTE](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[NUM_FACTURA] [float] NOT NULL,
 	[CLAVE] [varchar](max) NULL,
 	[NUMERO_CONSECUTIVO] [varchar](max) NOT NULL,
 	[FECHA_EMISION] [datetime] NOT NULL,
