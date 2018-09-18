@@ -7,7 +7,7 @@ from rs import session
 from rs.consumer import send
 from rs.models import Comprobante
 
-API_CLAVE_URL = "http://api.redabits.com/getrespuesta.php?clave=%s"
+CLAVE_URL = "http://api.redabits.com/getrespuesta.php?clave=%s"
 
 
 def receipts():
@@ -15,8 +15,12 @@ def receipts():
 
     They are batched in batch of 100 rows
     """
-    for receipt in session.query(Comprobante).yield_per(100).filter(
-            Comprobante.enviado == False).all():
+    for receipt in (
+        session.query(Comprobante)
+        .yield_per(100)
+        .filter(Comprobante.enviado == False)
+        .all()
+    ):
         yield receipt
 
 
@@ -27,15 +31,20 @@ def sendall():
     for comprobante in receipts():
         resp = send(comprobante)
         if resp.status_code == 200:
-            # Revisar respuesta del servidor y actualizar el estado del
-            # comprobante
+            # Actualiza estos datos solo si no estamos haciendo pruebas
+            clave = resp.content.strip()
             comprobante.enviado = True
-            comprobante.clave = resp.content.strip()
-            # FIXME: Coloca la clave en la factura relacionada a Comprobante.
+            comprobante.clave = clave
+            factura = comprobante.get_factura()
+            factura.folio = clave
+            factura.enlace = CLAVE_URL + clave
             session.commit()
         else:
             # Problemas con el servidor
-            logging.error("Could not get accepted receipt #{}",
-                          comprobante.numero_consecutivo)
-            logging.info("Will try re-sending receipt #{} on next run",
-                         comprobante.numero_consecutivo)
+            logging.error(
+                "Could not get accepted receipt #{}", comprobante.numero_consecutivo
+            )
+            logging.info(
+                "Will try re-sending receipt #{} on next run",
+                comprobante.numero_consecutivo,
+            )
