@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import http.client as http_client
-import json
 import logging
 from os import getenv
 from urllib.parse import urljoin
