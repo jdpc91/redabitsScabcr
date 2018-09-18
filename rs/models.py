@@ -50,6 +50,43 @@ class Factura(BASE):
     respuesta_tributacion = Column(
         String(1000), nullable=True, name='RESPUESTA_TRIBUTACION')
 
+    def get_details(self):
+        """ Return a list of purchase details
+        """
+        linea = 1
+        descuento_linea = self.descuento / self.monto_total
+
+        for detail in session.query(Historico).filter(
+                Historico.cod_pos == self.cod_pos,
+                Historico.num_factura == self.num_factura).all():
+            montototal = detail.cantidad * detail.precio
+            montodescuento = montototal * descuento_linea
+            descuentodesc = "Descuentos otorgados" if montodescuento else ''
+            subtotal = montototal - montodescuento
+            data = {
+                'NumeroLinea': linea,
+                'Codigo': {
+                    'Tipo': detail.tipo,
+                    'Codigo': detail.codigo,
+                },
+                'Cantidad': detail.cantidad,
+                'UnidadMedida': 'Unid',
+                'Detalle': detail.desc_producto,
+                'PrecioUnitario': detail.precio,
+                'MontoTotal': montototal,
+                'MontoDescuento': montodescuento,
+                'NaturalezaDescuento': descuentodesc,
+                'SubTotal': subtotal,
+                'Impuesto': {
+                    'Codigo': '01',
+                    'Tarifa': '13',
+                    'Monto': subtotal * 13
+                },
+                'MontoTotalLinea': subtotal + subtotal * 13
+            }
+            linea = linea + 1
+            yield data
+
     @staticmethod
     def _populate(amount=200):
         """ Add several invoices into the database for testing purpose.
@@ -207,32 +244,9 @@ class Comprobante(BASE):
                 'Numero': self.receptor_ident_num,
             }
         }
+        # FIXME: Get purchase details from Factura model when Comprobante and
+        # Factura have a relationship
         data['DetallesServicio'] = []
-        for detalle in Comprobante.get_details(self.id):
-            d = {
-                'LineaDetalle': {
-                    'NumeroLinea': detalle.numero_linea,
-                    'Codigo': {
-                        'Tipo': detalle.codigo_tipo,
-                        'Codigo': detalle.codigo_cod
-                    },
-                    'Cantidad': detalle.cantidad,
-                    'UnidadMedida': detalle.unidad_medida,
-                    'Detalle': detalle.detalle,
-                    'PrecioUnitario': detalle.precio_unitario,
-                    "MontoTotal": detalle.monto_total,
-                    "MontoDescuento": detalle.monto_descuento,
-                    "NaturalezaDescuento": detalle.naturaleza_descuento,
-                    "SubTotal": detalle.subtotal,
-                    "Impuesto": {
-                        "Codigo": detalle.impuesto_codigo,
-                        "Tarifa": detalle.impuesto_tarifa,
-                        "Monto": detalle.impuesto_monto,
-                    },
-                    "MontoTotalLinea": detalle.monto_total_linea,
-                }
-            }
-            data['DetalleServicio'].append(d)
         data['ResumenFactura'] = {
             'CodigoMoneda': self.resumen_cod_moneda,
             'TipoCambio': self.resumen_tipo_cambio,
