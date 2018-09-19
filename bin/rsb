@@ -16,16 +16,16 @@ Bye!"""
 
 parser = argparse.ArgumentParser(description=__desc)
 parser.add_argument(
-    '--production',
+    "--production",
     default=False,
     type=bool,
-    help=("Ensure the user *really* wants to use",
-          " this script with production values"))
+    help="Ensure the user *really* wants to use this script with production values",
+)
 
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    if not args.production and getenv('DEBUG') is None:
+    if not args.production and getenv("DEBUG") is None:
         logging.error(__error_desc)
         exit(1)
     sendall()

@@ -41,11 +41,11 @@ def sendall():
         else:
             # Problemas con el servidor
             logging.error(
-                "Could not get accepted receipt #{}. API response: {}",
+                "Could not get accepted receipt #%s. API response: %s",
                 comprobante.numero_consecutivo,
                 clave,
             )
             logging.info(
-                "Will try re-sending receipt #{} on next run",
+                "Will try re-sending receipt #%s on next run",
                 comprobante.numero_consecutivo,
             )

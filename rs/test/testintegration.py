@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import os
 import unittest
-from datetime import datetime
 
 from rs import session
 from rs.models import Factura
