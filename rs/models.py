@@ -100,7 +100,9 @@ class Factura(BASE):  # type: ignore
 
         g = Generic("es")
 
-        for n in range(amount):
+        r = session.execute("SELECT TOP 1 [FACTURA_ACTUAL] FROM [dbo].[POS]").first()[0]
+
+        for n in range(int(r), int(r) + amount):
             factura = Factura(
                 num_factura=n,
                 cod_pos="TIENDA",
@@ -122,6 +124,7 @@ class Factura(BASE):  # type: ignore
                 correo=g.person.email(),
             )
             session.add(factura)
+            session.execute('UPDATE [dbo].[POS] SET [FACTURA_ACTUAL] = [FACTURA_ACTUAL] + 1')
             for detalle in range(5):
                 historico = Historico(
                     num_factura=n,
