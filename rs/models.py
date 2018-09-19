@@ -273,11 +273,40 @@ class Comprobante(BASE):  # type: ignore
         }
         data["DetalleServicio"] = []
         factura = self.get_factura()
+        gravado, exento, descuentos, impuestos = 0.0, 0.0, 0.0, 0.0
         for detail in factura.get_details():
             data["DetalleServicio"].append(detail)
+            linea = detail["LineaDetalle"]
+            if linea["Impuesto"]["Tarifa"] > 0:
+                gravado = gravado + linea["SubTotal"]
+                impuestos = impuestos + linea["Impuesto"]["Monto"]
+            else:
+                exento = exento + linea["SubTotal"]
+
+            if linea["MontoDescuento"] > 0:
+                descuentos = descuentos + linea["MontoDescuento"]
+        # This is hacky. Update the record here.
+        # Suma de "SubTotal" de las linea que tengan "Impuesto"
+        self.resumen_total_mercancias_gravadas = gravado
+        # Suma de "SubTotal" de las lineas sin "Impuesto"
+        self.resumen_total_mercancias_exentas = exento
+        # Igual que `self.resumen_total_mercancias_gravadas`
+        self.resumen_total_gravado = gravado
+        # Igual que `self.resumen_total_mercancias_exentas`
+        self.resumen_total_exento = exento
+        # `self.resumen_total_mercancias_gravadas` + `self.resumen_total_mercancias_exentas`
+        self.resumen_total_venta = gravado + exento
+        # Suma de 'MontoDescuento' de las lineas de detalle
+        self.resumen_total_descuentos = descuentos
+        # Suma de 'Monto' en 'Impuesto' de todas las lineas de detalle
+        self.resumen_total_impuesto = impuestos
+        # 'TotalVentaNeta' + 'TotalImpuesto'
+        self.resumen_total_comprobante = (gravado + exento + impuestos) - descuentos
+        # Update the record
+        session.commit()
         data["ResumenFactura"] = {
-            "CodigoMoneda": self.resumen_cod_moneda,
-            "TipoCambio": float(self.resumen_tipo_cambio),
+            "CodigoMoneda": "CRC",
+            "TipoCambio": 1,
             "TotalMercanciasGravadas": float(self.resumen_total_mercancias_gravadas),
             "TotalMercanciasExentas": float(self.resumen_total_exento),
             "TotalGravado": float(self.resumen_total_gravado),
