@@ -47,6 +47,9 @@ class Factura(BASE):  # type: ignore
         String(1000), nullable=True, name="RESPUESTA_TRIBUTACION"
     )
 
+    def __repr__(self):
+        return "<Factura {} folio {}>".format(self.num_factura, self.folio)
+
     def get_details(self):
         """ Return a list of purchase details
         """
