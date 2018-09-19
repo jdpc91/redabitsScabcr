@@ -2,6 +2,21 @@ Changelog
 =========
 
 
+0.3 (2018-09-19)
+----------------
+
+Changes
+~~~~~~~
+- Show basic information for class instance of Factura. [Jorge Araya
+  Navarro]
+
+Fix
+~~~
+- Update Factura counter during testing. [Jorge Araya Navarro]
+
+  Avoid sending repeated voucher number to Hacienda
+
+
 0.2 (2018-09-19)
 ----------------
 
