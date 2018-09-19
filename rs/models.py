@@ -77,9 +77,13 @@ class Factura(BASE):  # type: ignore
                     "NaturalezaDescuento": descuentodesc,
                     "SubTotal": subtotal,
                     "Impuesto": [
-                        {"Codigo": "01", "Tarifa": "13", "Monto": subtotal * 13}
+                        {
+                            "Codigo": "01",
+                            "Tarifa": detail.iv,
+                            "Monto": subtotal * detail.iv,
+                        }
                     ],
-                    "MontoTotalLinea": subtotal + subtotal * 13,
+                    "MontoTotalLinea": subtotal + (subtotal * detail.iv),
                 }
             }
             linea = linea + 1
