@@ -70,7 +70,7 @@ class DockerStop(Command):
 
 setup(
     name="rs",
-    version="0.2",
+    version="0.3",
     description='"To be written"',
     url="https://github.com/jdpc91/redabitsScabcr",
     author="RedaBits",
