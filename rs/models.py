@@ -277,9 +277,10 @@ class Comprobante(BASE):  # type: ignore
         for detail in factura.get_details():
             data["DetalleServicio"].append(detail)
             linea = detail["LineaDetalle"]
-            if linea["Impuesto"]["Tarifa"] > 0:
+            # FIXME: This is a list, be careful
+            if linea["Impuesto"][0]["Tarifa"] > 0:
                 gravado = gravado + linea["SubTotal"]
-                impuestos = impuestos + linea["Impuesto"]["Monto"]
+                impuestos = impuestos + linea["Impuesto"][0]["Monto"]
             else:
                 exento = exento + linea["SubTotal"]
 
