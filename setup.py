@@ -19,7 +19,8 @@ class NoseTestCommand(TestCommand):
     def run_tests(self):
         # Run nose ensuring that argv simulates running nosetests directly
         import nose
-        nose.run_exit(argv=['nosetests'])
+
+        nose.run_exit(argv=["nosetests"])
 
 
 class DockerStart(Command):
@@ -33,18 +34,16 @@ class DockerStart(Command):
         pass
 
     def run(self):
-        command = [
-            "docker-compose", "up", "--detach", "--no-build", "--no-color"
-        ]
+        command = ["docker-compose", "up", "--detach", "--no-build", "--no-color"]
         where = "GNU/Linux"
-        if platform.system() == 'Windows':
+        if platform.system() == "Windows":
             where = "Windows"
             command.append("db-win")
         else:
             command.append("db")
         self.announce(
-            'Running command: {} on {}'.format(command, where),
-            level=distutils.log.INFO)
+            "Running command: {} on {}".format(command, where), level=distutils.log.INFO
+        )
         subprocess.check_call(command)
 
 
@@ -61,29 +60,30 @@ class DockerStop(Command):
     def run(self):
         command = ["docker-compose", "down"]
         where = "GNU/Linux"
-        if platform.system() == 'Windows':
+        if platform.system() == "Windows":
             where = "Windows"
         self.announce(
-            'Running command: {} on {}'.format(command, where),
-            level=distutils.log.INFO)
+            "Running command: {} on {}".format(command, where), level=distutils.log.INFO
+        )
         subprocess.check_call(command)
 
 
 setup(
-    name='rs',
-    version='0.1',
+    name="rs",
+    version="0.2",
     description='"To be written"',
-    url='https://github.com/jdpc91/redabitsScabcr',
-    author='RedaBits',
-    author_email='redabits@gmail.com',
-    license='Propietary',
-    packages=['rs'],
-    install_requires=['SQLAlchemy>=1.2', 'pyodbc>=4.0', 'requests>=2.19'],
-    scripts=['bin/rsb'],
-    tests_require=['nose', 'coverage', 'mimesis'],
+    url="https://github.com/jdpc91/redabitsScabcr",
+    author="RedaBits",
+    author_email="redabits@gmail.com",
+    license="Propietary",
+    packages=["rs"],
+    install_requires=["SQLAlchemy>=1.2", "pyodbc>=4.0", "requests>=2.19"],
+    scripts=["bin/rsb"],
+    tests_require=["nose", "coverage", "mimesis"],
     zip_safe=False,
     cmdclass={
-        'docker_start': DockerStart,
-        'docker_stop': DockerStop,
-        'test': NoseTestCommand
-    })
+        "docker_start": DockerStart,
+        "docker_stop": DockerStop,
+        "test": NoseTestCommand,
+    },
+)
