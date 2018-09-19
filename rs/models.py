@@ -298,6 +298,8 @@ class Comprobante(BASE):  # type: ignore
         self.resumen_total_venta = gravado + exento
         # Suma de 'MontoDescuento' de las lineas de detalle
         self.resumen_total_descuentos = descuentos
+        # "TotalVenta" - "TotalDescuentos"
+        self.resumen_total_venta_neta = (gravado + exento) - descuentos
         # Suma de 'Monto' en 'Impuesto' de todas las lineas de detalle
         self.resumen_total_impuesto = impuestos
         # 'TotalVentaNeta' + 'TotalImpuesto'
