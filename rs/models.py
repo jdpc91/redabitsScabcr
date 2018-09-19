@@ -76,16 +76,17 @@ class Factura(BASE):  # type: ignore
                     "MontoDescuento": montodescuento,
                     "NaturalezaDescuento": descuentodesc,
                     "SubTotal": subtotal,
-                    "Impuesto": [
-                        {
-                            "Codigo": "01",
-                            "Tarifa": detail.iv,
-                            "Monto": subtotal * detail.iv,
-                        }
-                    ],
-                    "MontoTotalLinea": subtotal + (subtotal * detail.iv),
+                    "MontoTotalLinea": subtotal + (subtotal * (detail.iv / 100)),
                 }
             }
+            if detail.iv > 0:
+                data["LineaDetalle"]["Impuesto"] = [
+                    {
+                        "Codigo": "01",
+                        "Tarifa": detail.iv,
+                        "Monto": subtotal * (detail.iv / 100),
+                    }
+                ]
             linea = linea + 1
             yield data
 
@@ -278,7 +279,7 @@ class Comprobante(BASE):  # type: ignore
             data["DetalleServicio"].append(detail)
             linea = detail["LineaDetalle"]
             # FIXME: This is a list, be careful
-            if linea["Impuesto"][0]["Tarifa"] > 0:
+            if "Impuesto" in linea:
                 gravado = gravado + linea["SubTotal"]
                 impuestos = impuestos + linea["Impuesto"][0]["Monto"]
             else:
