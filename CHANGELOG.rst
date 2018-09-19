@@ -2,6 +2,56 @@ Changelog
 =========
 
 
+0.2 (2018-09-19)
+----------------
+
+Changes
+~~~~~~~
+- Bump version. [Jorge Araya Navarro]
+- Add Impuesto only if there is some. [Jorge Araya Navarro]
+- Update RESUMEN_* columns in Comprobante model. [Jorge Araya Navarro]
+
+  In accordance with the following JSON example:
+
+      "ResumenFactura":
+  	{
+  		"CodigoMoneda":"",//USD para dolares, CRC para colones. Si es null por defecto es CRC
+  		"TipoCambio":"",//Obligatorio si "CodigoMoneda" != CRC
+  		"TotalMercanciasGravadas":2654.88,//suma de "SubTotal" de las lineas que tengan "Impuesto"
+  		"TotalMercanciasExentas":0,//suma de "SubTotal" de las lineas que no tengan "Impuesto"
+  		"TotalGravado":2654.88,//igual que "TotalMercanciasGravadas" en este proyecto
+  		"TotalExento":0,//igual que "TotalMercanciasExentas" en este proyecto
+  		"TotalVenta":2654.88,//"TotalGravado" + "TotalExento"
+  		"TotalDescuentos":0,//suma de "MontoDescuento" de las lineas que lo tengan
+  		"TotalVentaNeta":2654.88,//"TotalVenta" - "TotalDescuentos"
+  		"TotalImpuesto":345.1344,//suma de "Monto" de todos los "Impuesto"
+  		"TotalComprobante":3000.0144//"TotalVentaNeta" + "TotalImpuesto"
+  	}
+- Raise error in status 200 with bogus content. [Jorge Araya Navarro]
+
+  Prevents quirks from the API by ensuring that clave is a long string of digits.
+
+Fix
+~~~
+- Fix wrong access to dict inside list. [Jorge Araya Navarro]
+- Include missing field. [Jorge Araya Navarro]
+- Use IV column for taxes instead of hardcoded amount. [Jorge Araya
+  Navarro]
+- Check if clave is form out of digits. [Jorge Araya Navarro]
+
+  Avoid total failure of the app
+- Use same URL base for testing. [Jorge Araya Navarro]
+- Use different URL base for sandbox. [Jorge Araya Navarro]
+- Remove unused imports. [Jorge Araya Navarro]
+- Add field as a list of dicts. [Jorge Araya Navarro]
+- Add missing field and correction of typos. [Jorge Araya Navarro]
+- Fix misnamed field in payload. [Jorge Araya Navarro]
+
+Other
+~~~~~
+- Fixing the conversion of the num_factura. [Dennis Hernández]
+
+
 0.1 (2018-09-18)
 ----------------
 
