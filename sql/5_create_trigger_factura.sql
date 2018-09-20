@@ -66,7 +66,7 @@ INSERT INTO COMPROBANTE
 (SELECT
 	FOLIOMH
 	,NUM_FACTURA
-	,CONCAT(@Prefix_Num_Consecutivo, @Num_Consecutivo)
+	,@Prefix_Num_Consecutivo + @Num_Consecutivo
 	,GETDATE()
 	,'01'
 	,IIF ([MONTO_TARJETA] IS NULL OR [MONTO_TARJETA] = 0, '01', '02')
