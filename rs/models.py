@@ -67,6 +67,8 @@ class Factura(BASE):  # type: ignore
             montodescuento = montototal * (self.descuento / montototal)
             descuentodesc = "Descuentos otorgados" if montodescuento else ""
             subtotal = montototal - montodescuento
+            if detail.iv is None:
+                detail.iv = 0
             data = {
                 "LineaDetalle": {
                     "NumeroLinea": linea,
@@ -127,7 +129,9 @@ class Factura(BASE):  # type: ignore
                 correo=g.person.email(),
             )
             session.add(factura)
-            session.execute('UPDATE [dbo].[POS] SET [FACTURA_ACTUAL] = [FACTURA_ACTUAL] + 1')
+            session.execute(
+                "UPDATE [dbo].[POS] SET [FACTURA_ACTUAL] = [FACTURA_ACTUAL] + 1"
+            )
             for detalle in range(5):
                 historico = Historico(
                     num_factura=n,
