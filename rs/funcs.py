@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-
+import tqdm
 from rs import session
 from rs.consumer import send
 from rs.models import Comprobante
@@ -28,7 +28,8 @@ def sendall():
     """ Send all pending receipts
     """
     logging.info("Sending pending receipts...")
-    for comprobante in receipts():
+    total = Comprobante.count()
+    for comprobante in tqdm.tqdm(receipts(), total=total, ascii=True):
         resp = send(comprobante)
         clave = resp.content.decode("utf-8").strip()
         if clave.isdigit():
