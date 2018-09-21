@@ -11,9 +11,7 @@ DEV_DATABASE_URL = (
     "Moderna?driver=ODBC+Driver+17+for+SQL+Server"
 )
 
-engine = create_engine(
-    getenv("DATABASE_URL", DEV_DATABASE_URL), echo=True if getenv("DEBUG") else False
-)
+engine = create_engine(getenv("DATABASE_URL", DEV_DATABASE_URL), echo=False)
 # You import `session` for doing calls to the database, more about the session
 # object here:
 # https://docs.sqlalchemy.org/en/latest/orm/session_api.html#session-and-sessionmaker
