@@ -33,7 +33,7 @@ def auth(comprobante: Comprobante) -> dict:
     """ Ask and set authentication data into the payload
     """
     payload = comprobante.auth_data()
-    req = requests.post(AUTH_API_URL, data=payload)
+    req = requests.post(AUTH_API_URL, data=payload, timeout=30)
     logging.debug(req.content)
     json = req.json()
     data = comprobante.marshall()
@@ -62,6 +62,6 @@ def send(comprobante: Comprobante):
     """ Send the recipe to redabits API server
     """
     payload = auth(comprobante)
-    req = requests.post(RECIPE_API_URL, json=payload)
+    req = requests.post(RECIPE_API_URL, json=payload, timeout=30)
     logging.debug(req.content)
     return req
