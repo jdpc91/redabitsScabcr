@@ -7,6 +7,7 @@ from rs import session
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, SmallInteger, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import DECIMAL
+from sqlalchemy.orm.exc import MultipleResultsFound
 
 BASE = declarative_base()
 
@@ -251,9 +252,20 @@ class Comprobante(BASE):  # type: ignore
         return data
 
     def get_factura(self):
-        return (
-            session.query(Factura).filter(Factura.num_factura == self.num_factura).one()
-        )
+        try:
+            return (
+                session.query(Factura)
+                .filter(Factura.num_factura == self.num_factura)
+                .one()
+            )
+        except MultipleResultsFound:
+            raise ValueError("Factura {} esta repetida".format(self.num_factura))
+
+    @staticmethod
+    def count():
+        """ Return the amount of vouchers to send
+        """
+        return session.query(Comprobante).filter(Comprobante.enviado == False).count()
 
     def marshall(self):
         """ Return a dict with all fields
