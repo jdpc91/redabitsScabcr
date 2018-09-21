@@ -15,6 +15,9 @@ Try again with --production flag if you want to launch for production.
 
 Bye!"""
 
+__error_desc2 = """You need to remove DEBUG from the environment variables before using --production.
+"""
+
 parser = argparse.ArgumentParser(description=__desc)
 parser.add_argument(
     "--production",
@@ -38,6 +41,9 @@ if __name__ == "__main__":
 
     if not args.production and getenv("DEBUG") is None:
         logging.error(__error_desc)
+        exit(1)
+    elif args.production and getenv("DEBUG"):
+        logging.error(__error_desc2)
         exit(1)
     sendall()
 
