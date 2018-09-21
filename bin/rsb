@@ -5,6 +5,7 @@ import logging
 from os import getenv
 
 from rs.funcs import sendall
+from rs.models import Comprobante
 
 __desc = "Send receipts in batches"
 __error_desc = """You launched the script for testing but
@@ -17,13 +18,23 @@ Bye!"""
 parser = argparse.ArgumentParser(description=__desc)
 parser.add_argument(
     "--production",
+    action="store_true",
     default=False,
-    type=bool,
     help="Ensure the user *really* wants to use this script with production values",
+)
+parser.add_argument(
+    "--count",
+    action="store_true",
+    default=False,
+    help="Count how many vouchers are left for processing",
 )
 
 if __name__ == "__main__":
     args = parser.parse_args()
+
+    if args.count:
+        print("Comprobantes por procesar: {}".format(Comprobante.count()))
+        exit(0)
 
     if not args.production and getenv("DEBUG") is None:
         logging.error(__error_desc)
