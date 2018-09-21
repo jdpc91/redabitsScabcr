@@ -74,15 +74,16 @@ class Factura(BASE):  # type: ignore
                 "LineaDetalle": {
                     "NumeroLinea": linea,
                     "Codigo": {"Tipo": "04", "Codigo": detail.codigo.strip()},
-                    "Cantidad": detail.cantidad,
+                    "Cantidad": "%.5f" % round(detail.cantidad, 5),
                     "UnidadMedida": "Unid",
                     "Detalle": detail.desc_producto,
-                    "PrecioUnitario": detail.precio,
-                    "MontoTotal": montototal,
-                    "MontoDescuento": montodescuento,
+                    "PrecioUnitario": "%.5f" % round(detail.precio, 5),
+                    "MontoTotal": "%.5f" % round(montototal, 5),
+                    "MontoDescuento": "%.5f" % round(montodescuento, 5),
                     "NaturalezaDescuento": descuentodesc,
-                    "SubTotal": subtotal,
-                    "MontoTotalLinea": subtotal + (subtotal * (detail.iv / 100)),
+                    "SubTotal": "%.5f" % round(subtotal, 5),
+                    "MontoTotalLinea": "%.5f"
+                    % round(subtotal + (subtotal * (detail.iv / 100)), 5),
                 }
             }
             if detail.iv > 0:
@@ -90,7 +91,7 @@ class Factura(BASE):  # type: ignore
                     {
                         "Codigo": "01",
                         "Tarifa": detail.iv,
-                        "Monto": subtotal * (detail.iv / 100),
+                        "Monto": "%.5f" % round(subtotal * (detail.iv / 100), 5),
                     }
                 ]
             linea = linea + 1
@@ -333,15 +334,15 @@ class Comprobante(BASE):  # type: ignore
         data["ResumenFactura"] = {
             "CodigoMoneda": "CRC",
             "TipoCambio": 1,
-            "TotalMercanciasGravadas": float(self.resumen_total_mercancias_gravadas),
-            "TotalMercanciasExentas": float(self.resumen_total_exento),
-            "TotalGravado": float(self.resumen_total_gravado),
-            "TotalExento": float(self.resumen_total_exento),
-            "TotalVenta": float(self.resumen_total_venta),
-            "TotalDescuentos": float(self.resumen_total_descuentos),
-            "TotalVentaNeta": float(self.resumen_total_venta_neta),
-            "TotalImpuesto": float(self.resumen_total_impuesto),
-            "TotalComprobante": float(self.resumen_total_comprobante),
+            "TotalMercanciasGravadas": "%.5f" % self.resumen_total_mercancias_gravadas,
+            "TotalMercanciasExentas": "%.5f" % self.resumen_total_exento,
+            "TotalGravado": "%.5f" % self.resumen_total_gravado,
+            "TotalExento": "%.5f" % self.resumen_total_exento,
+            "TotalVenta": "%.5f" % self.resumen_total_venta,
+            "TotalDescuentos": "%.5f" % self.resumen_total_descuentos,
+            "TotalVentaNeta": "%.5f" % self.resumen_total_venta_neta,
+            "TotalImpuesto": "%.5f" % self.resumen_total_impuesto,
+            "TotalComprobante": "%.5f" % self.resumen_total_comprobante,
         }
         data["Normativa"] = {
             "NumeroResolucion": self.normativa_num_resolucion,
