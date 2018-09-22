@@ -92,7 +92,7 @@ class Factura(BASE):  # type: ignore
                     {
                         "Codigo": "01",
                         "Tarifa": detail.iv,
-                        "Monto": "%.5f" % round(subtotal * (detail.iv / 100), 5),
+                        "Monto": round(subtotal * (detail.iv / 100), 5),
                     }
                 ]
             linea = linea + 1
@@ -302,7 +302,6 @@ class Comprobante(BASE):  # type: ignore
         for detail in factura.get_details():
             data["DetalleServicio"].append(detail)
             linea = detail["LineaDetalle"]
-            # FIXME: This is a list, be careful
             if "Impuesto" in linea:
                 gravado = gravado + linea["SubTotal"]
                 impuestos = impuestos + linea["Impuesto"][0]["Monto"]
