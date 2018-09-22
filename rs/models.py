@@ -92,7 +92,7 @@ class Factura(BASE):  # type: ignore
                     {
                         "Codigo": "01",
                         "Tarifa": detail.iv,
-                        "Monto": round(subtotal * (detail.iv / 100), 5),
+                        "Monto": round(subtotal * (detail.iv / 100), 2),
                     }
                 ]
             linea = linea + 1
