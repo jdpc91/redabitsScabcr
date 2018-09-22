@@ -74,16 +74,16 @@ class Factura(BASE):  # type: ignore
                 "LineaDetalle": {
                     "NumeroLinea": linea,
                     "Codigo": {"Tipo": "04", "Codigo": detail.codigo.strip()},
-                    "Cantidad": round(detail.cantidad, 5),
+                    "Cantidad": round(detail.cantidad, 2),
                     "UnidadMedida": "Unid",
                     "Detalle": detail.desc_producto,
-                    "PrecioUnitario": round(detail.precio, 5),
-                    "MontoTotal": round(montototal, 5),
-                    "MontoDescuento": round(montodescuento, 5),
+                    "PrecioUnitario": round(detail.precio, 2),
+                    "MontoTotal": round(montototal, 2),
+                    "MontoDescuento": round(montodescuento, 2),
                     "NaturalezaDescuento": descuentodesc,
-                    "SubTotal": round(subtotal, 5),
+                    "SubTotal": round(subtotal, 2),
                     "MontoTotalLinea": round(
-                        subtotal + (subtotal * (detail.iv / 100)), 5
+                        subtotal + (subtotal * (detail.iv / 100)), 2
                     ),
                 }
             }
