@@ -21,8 +21,9 @@ DECLARE @Num_Consecutivo varchar(10)
 DECLARE @Cantidad_Comprobantes int
 
 SET @Cantidad_Comprobantes = (SELECT TOP 1 [FACTURA_ACTUAL] FROM [dbo].[POS])
-SET @Prefix_Num_Consecutivo = '0010000101'
-
+SET @Prefix_Num_Consecutivo = '00100001'
+SET @TipoFactura = (SELECT [TIPO] FROM inserted)
+SET @Tipo = (CASE @TipoFactura WHEN 'F' THEN '01' WHEN 'D' THEN '02' ELSE '03' END)
 IF @Cantidad_Comprobantes = 9999999999
 	SET @Num_Consecutivo = '0000000001';
 ELSE
@@ -66,7 +67,7 @@ INSERT INTO COMPROBANTE
 (SELECT
 	FOLIOMH
 	,NUM_FACTURA
-	,@Prefix_Num_Consecutivo + @Num_Consecutivo
+	,@Prefix_Num_Consecutivo + @Tipo + @Num_Consecutivo
 	,GETDATE()
 	,'01'
 	,(CASE WHEN [MONTO_TARJETA] IS NULL THEN '01' ELSE '02' END)
