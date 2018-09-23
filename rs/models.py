@@ -346,7 +346,7 @@ class Comprobante(BASE):  # type: ignore
             "TotalComprobante": "%.5f" % self.resumen_total_comprobante,
         }
         data["InformacionReferencia"] = {
-            "Numero" = self.referencia_numero,
+            "Numero" : self.referencia_numero,
         }
         data["Normativa"] = {
             "NumeroResolucion": self.normativa_num_resolucion,
