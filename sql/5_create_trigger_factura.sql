@@ -19,6 +19,8 @@ DECLARE @p1 TABLE (col VARCHAR(30))
 DECLARE @Prefix_Num_Consecutivo varchar(10)
 DECLARE @Num_Consecutivo varchar(10)
 DECLARE @Cantidad_Comprobantes int
+DECLARE @TipoFactura varchar(1)
+DECLARE @Tipo varchar(2)
 
 SET @Cantidad_Comprobantes = (SELECT TOP 1 [FACTURA_ACTUAL] FROM [dbo].[POS])
 SET @Prefix_Num_Consecutivo = '00100001'
@@ -107,5 +109,6 @@ FROM
 	@p1
 
 GO
+
 
 
