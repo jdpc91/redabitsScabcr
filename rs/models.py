@@ -226,6 +226,7 @@ class Comprobante(BASE):  # type: ignore
     resumen_total_comprobante = Column(
         DECIMAL(precision=18, scale=2), name="RESUMEN_TOTAL_COMPROBANTE"
     )
+    referencia_numero = Column(String(100), name="REFERENCIA_NUMERO")
     normativa_num_resolucion = Column(String(100), name="NORMATIVA_NUM_RESOLUCION")
     normativa_fecha_resolucion = Column(String(100), name="NORMATIVA_FECHA_RESOLUCION")
     otros = Column(String(500), nullable=True, name="OTROS")
@@ -343,6 +344,9 @@ class Comprobante(BASE):  # type: ignore
             "TotalVentaNeta": "%.5f" % self.resumen_total_venta_neta,
             "TotalImpuesto": "%.5f" % self.resumen_total_impuesto,
             "TotalComprobante": "%.5f" % self.resumen_total_comprobante,
+        }
+        data["InformacionReferencia"] = {
+            "Numero" = self.referencia_numero,
         }
         data["Normativa"] = {
             "NumeroResolucion": self.normativa_num_resolucion,
