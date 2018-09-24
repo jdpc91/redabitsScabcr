@@ -65,7 +65,7 @@ class Factura(BASE):  # type: ignore
             .all()
         ):
             montototal = detail.cantidad * detail.precio
-            montodescuento = montototal * (self.descuento / montototal)
+            montodescuento = montototal * (self.descuento / self.subtotal)
             descuentodesc = "Descuentos otorgados" if montodescuento else ""
             subtotal = montototal - montodescuento
             if detail.iv is None:
