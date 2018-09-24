@@ -74,16 +74,16 @@ class Factura(BASE):  # type: ignore
                 "LineaDetalle": {
                     "NumeroLinea": linea,
                     "Codigo": {"Tipo": "04", "Codigo": detail.codigo.strip()},
-                    "Cantidad": round(detail.cantidad, 2),
+                    "Cantidad": round(detail.cantidad, 3),
                     "UnidadMedida": "Unid",
                     "Detalle": detail.desc_producto,
-                    "PrecioUnitario": round(detail.precio, 2),
-                    "MontoTotal": round(montototal, 2),
-                    "MontoDescuento": round(montodescuento, 2),
+                    "PrecioUnitario": round(detail.precio, 5),
+                    "MontoTotal": round(montototal, 5),
+                    "MontoDescuento": round(montodescuento, 5),
                     "NaturalezaDescuento": descuentodesc,
-                    "SubTotal": round(subtotal, 2),
+                    "SubTotal": round(subtotal, 5),
                     "MontoTotalLinea": round(
-                        subtotal + (subtotal * (detail.iv / 100)), 2
+                        subtotal + (subtotal * (detail.iv / 100)), 5
                     ),
                 }
             }
@@ -92,7 +92,7 @@ class Factura(BASE):  # type: ignore
                     {
                         "Codigo": "01",
                         "Tarifa": detail.iv,
-                        "Monto": round(subtotal * (detail.iv / 100), 2),
+                        "Monto": round(subtotal * (detail.iv / 100), 5),
                     }
                 ]
             linea = linea + 1
@@ -314,23 +314,23 @@ class Comprobante(BASE):  # type: ignore
                     descuentos = descuentos + linea["MontoDescuento"]
             # This is hacky. Update the record here.
             # Suma de "SubTotal" de las linea que tengan "Impuesto"
-            self.resumen_total_mercancias_gravadas = gravado
+            self.resumen_total_mercancias_gravadas =  round(gravado , 5)
             # Suma de "SubTotal" de las lineas sin "Impuesto"
-            self.resumen_total_mercancias_exentas = exento
+            self.resumen_total_mercancias_exentas = round(exento, 5) 
             # Igual que `self.resumen_total_mercancias_gravadas`
-            self.resumen_total_gravado = gravado
+            self.resumen_total_gravado = round(gravado, 5) 
             # Igual que `self.resumen_total_mercancias_exentas`
-            self.resumen_total_exento = exento
+            self.resumen_total_exento = round(exento , 5)
             # `self.resumen_total_mercancias_gravadas` + `self.resumen_total_mercancias_exentas`
-            self.resumen_total_venta = gravado + exento
+            self.resumen_total_venta = round(gravado + exento, 5)
             # Suma de 'MontoDescuento' de las lineas de detalle
-            self.resumen_total_descuentos = descuentos
+            self.resumen_total_descuentos = round(descuentos, 5)
             # "TotalVenta" - "TotalDescuentos"
-            self.resumen_total_venta_neta = (gravado + exento) - descuentos
+            self.resumen_total_venta_neta = round((gravado + exento) - descuentos , 5)
             # Suma de 'Monto' en 'Impuesto' de todas las lineas de detalle
-            self.resumen_total_impuesto = impuestos
+            self.resumen_total_impuesto = round(impuestos, 5)
             # 'TotalVentaNeta' + 'TotalImpuesto'
-            self.resumen_total_comprobante = (gravado + exento + impuestos) - descuentos
+            self.resumen_total_comprobante = round((gravado + exento + impuestos) - descuentos , 5)
             # Update the record
             session.commit()
         else:
