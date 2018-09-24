@@ -258,7 +258,7 @@ class Comprobante(BASE):  # type: ignore
         try:
             return (
                 session.query(Factura)
-                .filter(Factura.num_factura == self.num_factura)
+                .filter(Factura.num_factura == self.num_factura and Factura.foliomh == self.referencia_numero)
                 .one()
             )
         except MultipleResultsFound:
@@ -297,41 +297,44 @@ class Comprobante(BASE):  # type: ignore
                 "Numero": self.receptor_ident_num,
             },
         }
-        data["DetalleServicio"] = []
-        factura = self.get_factura()
-        gravado, exento, descuentos, impuestos = 0.0, 0.0, 0.0, 0.0
-        for detail in factura.get_details():
-            data["DetalleServicio"].append(detail)
-            linea = detail["LineaDetalle"]
-            if "Impuesto" in linea:
-                gravado = gravado + linea["SubTotal"]
-                impuestos = impuestos + linea["Impuesto"][0]["Monto"]
-            else:
-                exento = exento + linea["SubTotal"]
-
-            if linea["MontoDescuento"] > 0:
-                descuentos = descuentos + linea["MontoDescuento"]
-        # This is hacky. Update the record here.
-        # Suma de "SubTotal" de las linea que tengan "Impuesto"
-        self.resumen_total_mercancias_gravadas = gravado
-        # Suma de "SubTotal" de las lineas sin "Impuesto"
-        self.resumen_total_mercancias_exentas = exento
-        # Igual que `self.resumen_total_mercancias_gravadas`
-        self.resumen_total_gravado = gravado
-        # Igual que `self.resumen_total_mercancias_exentas`
-        self.resumen_total_exento = exento
-        # `self.resumen_total_mercancias_gravadas` + `self.resumen_total_mercancias_exentas`
-        self.resumen_total_venta = gravado + exento
-        # Suma de 'MontoDescuento' de las lineas de detalle
-        self.resumen_total_descuentos = descuentos
-        # "TotalVenta" - "TotalDescuentos"
-        self.resumen_total_venta_neta = (gravado + exento) - descuentos
-        # Suma de 'Monto' en 'Impuesto' de todas las lineas de detalle
-        self.resumen_total_impuesto = impuestos
-        # 'TotalVentaNeta' + 'TotalImpuesto'
-        self.resumen_total_comprobante = (gravado + exento + impuestos) - descuentos
-        # Update the record
-        session.commit()
+        if self.referencia_numero == None:
+            data["DetalleServicio"] = []
+            factura = self.get_factura()
+            gravado, exento, descuentos, impuestos = 0.0, 0.0, 0.0, 0.0
+            for detail in factura.get_details():
+                data["DetalleServicio"].append(detail)
+                linea = detail["LineaDetalle"]
+                if "Impuesto" in linea:
+                    gravado = gravado + linea["SubTotal"]
+                    impuestos = impuestos + linea["Impuesto"][0]["Monto"]
+                else:
+                    exento = exento + linea["SubTotal"]
+    
+                if linea["MontoDescuento"] > 0:
+                    descuentos = descuentos + linea["MontoDescuento"]
+            # This is hacky. Update the record here.
+            # Suma de "SubTotal" de las linea que tengan "Impuesto"
+            self.resumen_total_mercancias_gravadas = gravado
+            # Suma de "SubTotal" de las lineas sin "Impuesto"
+            self.resumen_total_mercancias_exentas = exento
+            # Igual que `self.resumen_total_mercancias_gravadas`
+            self.resumen_total_gravado = gravado
+            # Igual que `self.resumen_total_mercancias_exentas`
+            self.resumen_total_exento = exento
+            # `self.resumen_total_mercancias_gravadas` + `self.resumen_total_mercancias_exentas`
+            self.resumen_total_venta = gravado + exento
+            # Suma de 'MontoDescuento' de las lineas de detalle
+            self.resumen_total_descuentos = descuentos
+            # "TotalVenta" - "TotalDescuentos"
+            self.resumen_total_venta_neta = (gravado + exento) - descuentos
+            # Suma de 'Monto' en 'Impuesto' de todas las lineas de detalle
+            self.resumen_total_impuesto = impuestos
+            # 'TotalVentaNeta' + 'TotalImpuesto'
+            self.resumen_total_comprobante = (gravado + exento + impuestos) - descuentos
+            # Update the record
+            session.commit()
+        else:
+            pass
         data["ResumenFactura"] = {
             "CodigoMoneda": "CRC",
             "TipoCambio": 1,
@@ -345,9 +348,12 @@ class Comprobante(BASE):  # type: ignore
             "TotalImpuesto": "%.5f" % self.resumen_total_impuesto,
             "TotalComprobante": "%.5f" % self.resumen_total_comprobante,
         }
-        data["InformacionReferencia"] = {
-            "Numero" : self.referencia_numero,
-        }
+        if self.referencia_numero == None:
+            pass
+        else:
+            data["InformacionReferencia"] = {
+                "Numero" : self.referencia_numero,
+            }
         data["Normativa"] = {
             "NumeroResolucion": self.normativa_num_resolucion,
             "FechaResolucion": self.normativa_fecha_resolucion,
@@ -355,6 +361,5 @@ class Comprobante(BASE):  # type: ignore
         data["Otros"] = self.otros
         data["notify"] = {"to": self.notify_to, "from": self.notify_from}
         data["papel"] = self.papel
-        assert len(data["DetalleServicio"]) > 0, "`DetallesServicios` can't be empty"
 
         return data
